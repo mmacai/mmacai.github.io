@@ -1,0 +1,8 @@
+excerpt_separator: ""
+pygments: true
+markdown: kramdown
+url: http://mmacai.github.io
+title: Mario Macai
+tagline: A log of everyday life
+description: Todo
+paginate: 5
