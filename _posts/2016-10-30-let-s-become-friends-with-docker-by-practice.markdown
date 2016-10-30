@@ -2,8 +2,10 @@
 published: true
 title: Let's become friends with Docker by practice
 layout: post
+tags: [docker, nodejs]
+categories: [docker, nodejs]
 ---
-# Let's become friends with Docker by practice
+# Part 1
 
 ## Contains
 - Setup Dockerfile
