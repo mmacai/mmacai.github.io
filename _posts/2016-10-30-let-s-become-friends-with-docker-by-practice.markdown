@@ -27,7 +27,6 @@ categories: [docker, nodejs]
 - Docker compose
   - Build
   - Start, Stop & Remove
-  - Bundle
 
 ## Brief overview / Introduction
 Docker is an open-source tool designed to create, build, deploy and run applications as easy as possible using containers. You are able to create system with all necessary things you need and wrap your application with it. This way environment is always the same. Unlike virtual machines, Docker shares OS kernel across containers, where every container is running as a process on this hosted OS.
@@ -95,7 +94,7 @@ CMD ["npm", "start"]
 
 `# 4` just runs `npm install` to install all dependencies as you would do locally not using docker.
 
-`# 5` shows example how volumes work. Basically you will create new empty directory, create file with text `hello world` and mount this folder. This is just simple example, in most cases you will use volumes for databases etc. In `Dockefile` you can only mount container's content which will be automatically mapped to docker root directory(`docker run` can bind volume to custom host folder).
+`# 5` shows example how volumes work. Basically you will create new empty directory, create file with text `hello world` and mount this folder. This is just simple example, in most cases you will use volumes for databases etc. In `Dockefile` you can only mount container's content which will be automatically mapped to docker root directory(`docker run` can bind volumes to custom host folder).
 
 `# 6` sets health checks for image. As options are saying it will occur every 2 minutes with timeout of 3 seconds. Second is condition at which it will be evaluated, so if this fails container will be considered unhealthy. For now health check will fail, because NodeJS distribution we are using doesn't have curl. But in this place you should place whatever you think is telling about your container health status. For example when database is ready etc.
 
@@ -106,9 +105,10 @@ CMD ["npm", "start"]
 Finally `# 9` tells docker what should be executed when everything is done. In this case how to start the application.
 
 ## Images
+
 ### Build
 
-Next step is to build image using our `Dockerfile`. In terminal type:
+Next step is to build image using our `Dockerfile`. In terminal type:  
 `docker build -t=my-app .` (inside app)  
 `docker build -t=my-service .` (inside service)
 
@@ -144,6 +144,7 @@ Image should be downloaded and able to run in container. Check with:
 `docker images`
 
 ## Containers
+
 ### Run
 
 Images are ready to run inside container, so let's go for it:  
@@ -151,7 +152,7 @@ Images are ready to run inside container, so let's go for it:
 Name of your container can be absolutely different from image name, but it's good to keep it at least similar for easier searching later.
 
 Using this command we have running service locally inside docker. Let’s check it's true with command:
-`docker ps`
+`docker ps`.
 Running container should be listed there.
 
 You can also list containers that exists, but are not running:
@@ -232,7 +233,10 @@ You can recognize that healthy status was triggered by success containing `Hello
 
 If you need to mount your docker container data to disk to not loss them when container is destroyed you are able to use volumes. Easiest example of using it is database. Imagine you run database and there are already some data, but when you remove container data are lost. Volumes will mount data from the container to disk and once you remove container and start it again database will load those data from disk.
 
-In our example we can do something like this(instead of `$(pwd) you may use any directory you want`):  
+In our example we can do something like this(instead of `$(pwd)` you may use any directory you want): 
+
+**For Windows users: Use either GitBash or transform volumes host path($(pwd)/blog-volume) to Windows path style**
+ 
 `docker run --name my-app -p 4444:4444 --network my-network -d -e SERVICE_URL="http://my-service:4000" -v $(pwd)/blog-volume:/myvol2 my-app`
 
 This means that `myvol` folder will be mapped to disk at our current place and put inside `blog-volume`. Stop and remove container and by using command above you should have empty `blog-volume` folder at your current place. We didn't use `myvol`, because it would overlap original mounting from `Dockerfile` and content inside container's `myvol` would be hidden. Let's create some txt file inside `blog-volume` and check if it was added inside container.
@@ -278,7 +282,7 @@ We can try following example:
 
 It should print `Hello` to terminal output and after that start app. If we omit `npm start` app won't start, don't forget by doing this we are **overwriting dockerfile command**(at the end of the file).
 
-### Docker compose
+## Docker compose
 
 As app starts to grow up you may find starting every container one by one exhausting. For this purpose exists Docker compose. Docker compose file allows you to specify all containers you want to start with same properties as you are able to use by standard docker run command. Currently are available two versions and we will use the second one(`version: '2'`).
 
@@ -320,7 +324,7 @@ my-app:
         - my-service2
 ```
 
-#### Start, Stop & Remove
+### Start, Stop & Remove
 
 Since we have docker-compose file we are able to start app. Just by using command:
 `docker-compose up –d`
